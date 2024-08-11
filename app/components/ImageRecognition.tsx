@@ -15,12 +15,20 @@ export const ImageRecognition = ({
 
 	const startCamera = useCallback(async () => {
 		try {
-			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+			// Request the back camera by specifying the facingMode
+			const stream = await navigator.mediaDevices.getUserMedia({
+				video: {
+					facingMode: { exact: "environment" }, // 'environment' requests the back camera
+				},
+			});
 			const videoElement = videoRef.current;
 			if (videoElement) {
 				videoElement.srcObject = stream;
+				videoElement.onloadedmetadata = () => {
+					videoElement.play();
+					setCameraActive(true);
+				};
 			}
-			setCameraActive(true);
 		} catch (err) {
 			console.error("Error accessing camera: ", err);
 			setSnackbarMessage("Error accessing camera");
