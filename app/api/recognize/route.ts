@@ -3,11 +3,11 @@ import VisionClient from "@google-cloud/vision";
 import OpenAI from "openai";
 
 // Decode the Base64-encoded credentials and use them directly
-const credentialsBase64 = process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
+const credentialsBase64 = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 if (!credentialsBase64) {
 	throw new Error(
-		"Environment variable GOOGLE_APPLICATION_CREDENTIALS_BASE64 is not set.",
+		"Environment variable GOOGLE_APPLICATION_CREDENTIALS is not set.",
 	);
 }
 
