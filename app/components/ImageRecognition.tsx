@@ -76,6 +76,8 @@ export const ImageRecognition = ({
 				const dataUrl = canvasRef.current.toDataURL("image/png");
 				setPreviewSrc(dataUrl);
 				processImage(dataUrl);
+				setCameraActive(false);
+				stopCamera();
 			}
 		}
 	};
@@ -99,6 +101,8 @@ export const ImageRecognition = ({
 				});
 				setSnackbarMessage("Item recognized successfully");
 				setSnackbarOpen(true);
+				setCameraActive(false);
+				stopCamera();
 			} else {
 				console.error("Error recognizing image:", response.statusText);
 				setSnackbarMessage("Error recognizing image");
@@ -133,6 +137,7 @@ export const ImageRecognition = ({
 						width: "100%",
 						maxHeight: "400px",
 						display: cameraActive ? "block" : "none",
+						objectFit: "contain",
 					}}
 				/>
 				<canvas
@@ -163,7 +168,7 @@ export const ImageRecognition = ({
 				)}
 			</div>
 
-			{previewSrc && (
+			{/* {previewSrc && (
 				<div style={{ marginTop: "20px" }}>
 					<h3>Captured Image Preview:</h3>
 					<div
@@ -178,12 +183,12 @@ export const ImageRecognition = ({
 							src={previewSrc}
 							alt="Captured Preview"
 							layout="responsive"
-							width={640}
+							width={480}
 							height={480}
 						/>
 					</div>
 				</div>
-			)}
+			)} */}
 
 			<Snackbar
 				open={snackbarOpen}

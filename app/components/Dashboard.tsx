@@ -63,12 +63,7 @@ const Dashboard = () => {
 			<div className="flex flex-col items-center space-y-4 mb-4 sm:flex-row sm:justify-center sm:space-x-4 sm:items-center">
 				<AutocompleteSearchBar onSelect={handleSelect} />
 				<ImageRecognition onRecognize={handleSelect} />
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={handleOpen}
-					className="my-2"
-				>
+				<Button variant="contained" color="primary" onClick={handleOpen}>
 					Add Item Manually
 				</Button>
 			</div>
