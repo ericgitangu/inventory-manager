@@ -89,8 +89,28 @@ export async function POST(
 			// Use the first detected object as the item's name, with a fallback
 			const itemName = labels[0]?.name ?? "Unknown Item";
 
-			// Use OpenAI to categorize the item
+			// Use OpenAI to generate a short description of the item
 			const openaiResponse = await openaiClient.chat.completions.create({
+				model: "gpt-4",
+				messages: [
+					{
+						role: "system",
+						content: "You are a helpful assistant for describing items.",
+					},
+					{
+						role: "user",
+						content: `Please provide a short description for the following item: ${itemName}`,
+					},
+				],
+				max_tokens: 50,
+			});
+
+			// Extract the description from the OpenAI response
+			const description =
+				openaiResponse?.choices[0]?.message?.content?.trim() ?? "No description available";
+
+			// Reuse the OpenAI client to categorize the item
+			const categoryResponse = await openaiClient.chat.completions.create({
 				model: "gpt-4",
 				messages: [
 					{
@@ -107,15 +127,13 @@ export async function POST(
 
 			// Extract the content from the OpenAI response
 			const rawCategories =
-				openaiResponse?.choices[0]?.message?.content ?? "Uncategorized";
+				categoryResponse?.choices[0]?.message?.content ?? "Uncategorized";
 
 			// Convert the raw categories into a structured format
 			const category = rawCategories
 				.split(",")
 				.map((category) => category.trim())
 				.join("/");
-
-			const description = ` ${itemName}`;
 
 			const response: ImageRecognitionResponse = {
 				name: itemName,
