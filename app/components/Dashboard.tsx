@@ -60,10 +60,15 @@ const Dashboard = () => {
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-2xl font-bold mb-4">Inventory Dashboard</h1>
-			<div className="flex flex-col space-y-4 mb-4 sm:flex-row sm:justify-center sm:space-x-4 sm:items-center">
+			<div className="flex flex-col items-center space-y-4 mb-4 sm:flex-row sm:justify-center sm:space-x-4 sm:items-center">
 				<AutocompleteSearchBar onSelect={handleSelect} />
 				<ImageRecognition onRecognize={handleSelect} />
-				<Button variant="contained" color="primary" onClick={handleOpen}>
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={handleOpen}
+					className="my-2"
+				>
 					Add Item Manually
 				</Button>
 			</div>
@@ -71,7 +76,7 @@ const Dashboard = () => {
 				<DataGrid
 					rows={state.items}
 					columns={columns}
-					pageSizeOptions={[5, 10, 20]}
+					pageSizeOptions={[5, 10, 20, 50, 100]}
 					checkboxSelection
 					disableRowSelectionOnClick
 					paginationMode="client"

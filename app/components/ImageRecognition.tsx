@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { Button, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Image from "next/image";
 
-export const ImageRecognition = ({ onRecognize }: { onRecognize: (item: any) => void }) => {
+export const ImageRecognition = ({
+	onRecognize,
+}: { onRecognize: (item: any) => void }) => {
 	const [cameraActive, setCameraActive] = useState(false);
 	const [snackbarOpen, setSnackbarOpen] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -12,26 +14,51 @@ export const ImageRecognition = ({ onRecognize }: { onRecognize: (item: any) => 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const startCamera = useCallback(async () => {
+		const videoElement = videoRef.current;
+		if (!videoElement) {
+			console.error(
+				"Video element is not available when trying to start the camera.",
+			);
+			return;
+		}
+
 		try {
-			// Request the back camera by specifying the facingMode
+			console.log("Attempting to access the front-facing camera...");
 			const stream = await navigator.mediaDevices.getUserMedia({
-				video: {
-					facingMode: { exact: "environment" }, // 'environment' requests the back camera
-				},
+				video: { facingMode: { ideal: "environment" } }, // Prefer back-facing camera
 			});
-			const videoElement = videoRef.current;
-			if (videoElement) {
-				videoElement.srcObject = stream;
-				videoElement.onloadedmetadata = () => {
-					videoElement.play();
-					setCameraActive(true);
-				};
-			}
-			setCameraActive(true);
+
+			videoElement.srcObject = stream;
+			videoElement.onloadedmetadata = () => {
+				console.log("Video metadata loaded, setting camera active state...");
+				setCameraActive(true);
+			};
 		} catch (err) {
-			console.error("Error accessing camera: ", err);
-			setSnackbarMessage("Error accessing camera");
-			setSnackbarOpen(true);
+			if ((err as Error).name === "OverconstrainedError") {
+				console.warn(
+					"Front-facing camera not found or cannot be accessed. Falling back to the default camera.",
+				);
+				try {
+					const stream = await navigator.mediaDevices.getUserMedia({
+						video: true,
+					});
+					videoElement.srcObject = stream;
+					videoElement.onloadedmetadata = () => {
+						console.log(
+							"Fallback video metadata loaded, setting camera active state...",
+						);
+						setCameraActive(true);
+					};
+				} catch (fallbackError) {
+					console.error("Error accessing fallback camera: ", fallbackError);
+					setSnackbarMessage("Error accessing any camera");
+					setSnackbarOpen(true);
+				}
+			} else {
+				console.error("Error accessing camera: ", err);
+				setSnackbarMessage("Error accessing camera");
+				setSnackbarOpen(true);
+			}
 		}
 	}, []);
 
@@ -39,11 +66,15 @@ export const ImageRecognition = ({ onRecognize }: { onRecognize: (item: any) => 
 		if (videoRef.current && canvasRef.current) {
 			const context = canvasRef.current.getContext("2d");
 			if (context) {
-				// Draw the current video frame to the canvas
-				context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-				// Convert the canvas content to a data URL
+				context.drawImage(
+					videoRef.current,
+					0,
+					0,
+					canvasRef.current.width,
+					canvasRef.current.height,
+				);
 				const dataUrl = canvasRef.current.toDataURL("image/png");
-				setPreviewSrc(dataUrl); // Set the preview image source
+				setPreviewSrc(dataUrl);
 				processImage(dataUrl);
 			}
 		}
@@ -89,64 +120,69 @@ export const ImageRecognition = ({ onRecognize }: { onRecognize: (item: any) => 
 			videoElement.srcObject = null;
 		}
 		setCameraActive(false);
-		setPreviewSrc(null); // Clear the preview when the camera is stopped
+		setPreviewSrc(null);
 	}, []);
-
-	// useEffect to handle camera activation when the video stream starts
-	useEffect(() => {
-		const videoElement = videoRef.current;
-		if (videoElement) {
-			videoElement.onloadedmetadata = () => {
-				setCameraActive(true);
-			};
-		}
-		// No dependencies here since videoRef.current is mutable and won't trigger re-renders
-	}, []);
-
-	// Clean up the camera stream when the component unmounts
-	useEffect(() => {
-		return () => {
-			stopCamera();
-		};
-	}, [stopCamera]);
 
 	return (
 		<div>
-			{cameraActive ? (
-				<div>
-					<video ref={videoRef} autoPlay style={{ width: "100%", maxHeight: "400px" }} />
-					<canvas ref={canvasRef} style={{ display: "none" }} width={640} height={480} />
-					<Button variant="contained" color="primary" onClick={captureImage}>
-						Capture Image
-					</Button>
-					<Button variant="contained" color="secondary" onClick={stopCamera}>
-						Stop Camera
-					</Button>
-					{/* Show the captured image preview */}
-					{previewSrc && (
-						<div style={{ marginTop: "20px" }}>
-							<h3>Captured Image Preview:</h3>
-							<div style={{ position: "relative", width: "100%", maxWidth: "640px", height: "auto" }}>
-								<Image
-									src={previewSrc}
-									alt="Captured Preview"
-									layout="responsive"
-									width={640}
-									height={480}
-								/>
-							</div>
-						</div>
-					)}
-				</div>
-			) : (
+			<div>
+				<video
+					ref={videoRef}
+					autoPlay
+					style={{
+						width: "100%",
+						maxHeight: "400px",
+						display: cameraActive ? "block" : "none",
+					}}
+				/>
+				<canvas
+					ref={canvasRef}
+					style={{ display: "none" }}
+					width={640}
+					height={480}
+				/>
+			</div>
+			<div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
 				<Button
 					variant="contained"
 					color="primary"
-					onClick={startCamera}
+					onClick={cameraActive ? captureImage : startCamera}
 					className="w-full"
 				>
-					Activate Camera
+					{cameraActive ? "Capture Image" : "Activate Camera"}
 				</Button>
+				{cameraActive && (
+					<Button
+						variant="contained"
+						color="secondary"
+						onClick={stopCamera}
+						className="w-full"
+					>
+						Stop Camera
+					</Button>
+				)}
+			</div>
+
+			{previewSrc && (
+				<div style={{ marginTop: "20px" }}>
+					<h3>Captured Image Preview:</h3>
+					<div
+						style={{
+							position: "relative",
+							width: "100%",
+							maxWidth: "640px",
+							height: "auto",
+						}}
+					>
+						<Image
+							src={previewSrc}
+							alt="Captured Preview"
+							layout="responsive"
+							width={640}
+							height={480}
+						/>
+					</div>
+				</div>
 			)}
 
 			<Snackbar
