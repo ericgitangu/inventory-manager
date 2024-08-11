@@ -24,16 +24,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	const [isDark, setIsDark] = useState(false);
 
 	useEffect(() => {
-		const storedTheme = localStorage.getItem("theme");
-		if (storedTheme) {
-			setIsDark(storedTheme === "dark");
-		}
-	}, []);
+		setIsDark(isDark);
+	}, [isDark]);
 
 	const toggleTheme = () => {
-		const newIsDark = !isDark;
-		setIsDark(newIsDark);
-		localStorage.setItem("theme", newIsDark ? "dark" : "light");
+		setIsDark(!isDark);
 	};
 
 	const theme = createTheme({

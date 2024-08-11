@@ -1,37 +1,85 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import vision from "@google-cloud/vision";
 
-const client = new OpenAI({
-	apiKey: process.env["OPENAI_API_KEY"],
-});
+// Initialize the Google Vision client
+const client = new vision.ImageAnnotatorClient();
 
-export async function POST(req: NextRequest) {
-	const { query } = await req.json();
+// Define interfaces for the request and response
+interface ImageRecognitionRequest {
+	image: string;
+}
 
-	if (!query) {
-		return NextResponse.json({ error: "Query is required" }, { status: 400 });
-	}
+interface ImageRecognitionResponse {
+	name: string;
+	description: string;
+	category: string;
+}
 
+interface ErrorResponse {
+	error: string;
+}
+
+export async function POST(
+	req: NextRequest,
+): Promise<NextResponse<ImageRecognitionResponse | ErrorResponse>> {
 	try {
-		const response = await client.chat.completions.create({
-			model: "gpt-4", // Specify the model correctly
-			messages: [
-				{ role: "system", content: "You are a helpful assistant." },
-				{ role: "user", content: `Find items for: ${query}` },
-			],
-			max_tokens: 50,
-			n: 5,
-			stop: ["\n"],
-		});
+		const { image }: ImageRecognitionRequest = await req.json();
 
-		const suggestions = response.choices.map((choice: any) =>
-			choice.message.content.trim(),
-		);
+		if (!image) {
+			return NextResponse.json(
+				{ error: "Image data is required" },
+				{ status: 400 },
+			);
+		}
 
-		return NextResponse.json({ suggestions }, { status: 200 });
+		// Remove the prefix of the base64 string, if it exists
+		const base64Image = image.replace(/^data:image\/png;base64,/, "");
+		const buffer = Buffer.from(base64Image, "base64");
+
+		// Call Google Vision API for object localization
+		const [result] =
+			(await client?.objectLocalization({ image: { content: buffer } })) ?? [];
+		if (!result) {
+			return NextResponse.json(
+				{ error: "No result from Vision API" },
+				{ status: 500 },
+			);
+		}
+
+		if (!result) {
+			return NextResponse.json(
+				{ error: "No result from Vision API" },
+				{ status: 500 },
+			);
+		}
+
+		const labels = result.localizedObjectAnnotations ?? [];
+
+		if (labels.length > 0) {
+			// Use the first detected object as the item's name, with a fallback
+			const itemName = labels[0]?.name ?? "Unknown Item";
+
+			// Additional logic to determine the category (you can refine this)
+			const category = "Uncategorized"; // Default category
+			const description = `This is a recognized item: ${itemName}`;
+
+			const response: ImageRecognitionResponse = {
+				name: itemName,
+				description,
+				category,
+			};
+
+			return NextResponse.json(response);
+		} else {
+			return NextResponse.json(
+				{ error: "No recognizable objects found" },
+				{ status: 400 },
+			);
+		}
 	} catch (error) {
+		console.error("Error recognizing image:", error);
 		return NextResponse.json(
-			{ error: "Error fetching autocomplete suggestions" },
+			{ error: "Error processing image" },
 			{ status: 500 },
 		);
 	}

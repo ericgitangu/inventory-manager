@@ -24,12 +24,8 @@ const Dashboard = () => {
 		name: "",
 		description: "",
 		quantity: 1,
+		category: "",
 	});
-	const [inventory, setInventory] = useState<any[]>([]);
-
-	const addToTable = (item: any) => {
-		setInventory((prevInventory) => [...prevInventory, item]);
-	};
 
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
@@ -39,35 +35,33 @@ const Dashboard = () => {
 	};
 
 	const handleFormSubmit = () => {
-		addItem({
+		const newItem = {
 			...formState,
 			id: Date.now().toString(),
 			dateAdded: new Date().toISOString(),
-		});
+		};
+		addItem(newItem); // Add the item to the context state
 		setSnackbarMessage("Item added successfully");
 		setSnackbarOpen(true);
 		handleClose();
 	};
 
 	const handleSelect = (item: any) => {
-		addItem({
+		const newItem = {
 			...item,
 			id: Date.now().toString(),
 			dateAdded: new Date().toISOString(),
-		});
+		};
+		addItem(newItem); // Add the item to the context state
 		setSnackbarMessage("Item added successfully");
 		setSnackbarOpen(true);
-		handleClose();
 	};
 
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-2xl font-bold mb-4">Inventory Dashboard</h1>
-			<div className="flex space-x-4 mb-4">
-				<AutocompleteSearchBar
-					onSelect={(item) => console.log("Selected:", item)}
-					addToTable={addToTable}
-				/>
+			<div className="flex flex-col space-y-4 mb-4 sm:flex-row sm:justify-center sm:space-x-4 sm:items-center">
+				<AutocompleteSearchBar onSelect={handleSelect} />
 				<ImageRecognition onRecognize={handleSelect} />
 				<Button variant="contained" color="primary" onClick={handleOpen}>
 					Add Item Manually
@@ -106,6 +100,13 @@ const Dashboard = () => {
 							label="Quantity"
 							name="quantity"
 							type="number"
+							fullWidth
+							variant="outlined"
+							onChange={handleFormChange}
+						/>
+						<TextField
+							label="Category"
+							name="category"
 							fullWidth
 							variant="outlined"
 							onChange={handleFormChange}

@@ -1,4 +1,5 @@
 // app/page.tsx
+"use client";
 import { useTheme } from "./context/ThemeContext";
 import Dashboard from "./components/Dashboard";
 import { AppBar, Toolbar, Typography, IconButton, Avatar } from "@mui/material";
@@ -22,7 +23,10 @@ export default function Page() {
 				</Toolbar>
 			</AppBar>
 
-			<main className="p-4">
+			<main
+				className="p-4"
+				// style={{ display: "flex", justifyContent: "center" }}
+			>
 				<Dashboard />
 			</main>
 		</>
