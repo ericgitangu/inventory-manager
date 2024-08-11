@@ -154,7 +154,7 @@ export const ImageRecognition = ({
 					onClick={cameraActive ? captureImage : startCamera}
 					className="w-full"
 				>
-					{cameraActive ? "Capture Image" : "Activate Camera"}
+					{cameraActive ? "Capture Image" : "Add with Camera"}
 				</Button>
 				{cameraActive && (
 					<Button
