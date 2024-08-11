@@ -20,6 +20,7 @@ export const ImageRecognition = ({
 			if (videoElement) {
 				videoElement.srcObject = stream;
 			}
+			setCameraActive(true);
 		} catch (err) {
 			console.error("Error accessing camera: ", err);
 			setSnackbarMessage("Error accessing camera");
@@ -152,7 +153,12 @@ export const ImageRecognition = ({
 					)}
 				</div>
 			) : (
-				<Button variant="contained" color="primary" onClick={startCamera}>
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={startCamera}
+					className="w-full"
+				>
 					Activate Camera
 				</Button>
 			)}
