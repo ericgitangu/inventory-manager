@@ -3,9 +3,7 @@ import { Button, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Image from "next/image";
 
-export const ImageRecognition = ({
-	onRecognize,
-}: { onRecognize: (item: any) => void }) => {
+export const ImageRecognition = ({ onRecognize }: { onRecognize: (item: any) => void }) => {
 	const [cameraActive, setCameraActive] = useState(false);
 	const [snackbarOpen, setSnackbarOpen] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -29,6 +27,7 @@ export const ImageRecognition = ({
 					setCameraActive(true);
 				};
 			}
+			setCameraActive(true);
 		} catch (err) {
 			console.error("Error accessing camera: ", err);
 			setSnackbarMessage("Error accessing camera");
@@ -41,13 +40,7 @@ export const ImageRecognition = ({
 			const context = canvasRef.current.getContext("2d");
 			if (context) {
 				// Draw the current video frame to the canvas
-				context.drawImage(
-					videoRef.current,
-					0,
-					0,
-					canvasRef.current.width,
-					canvasRef.current.height,
-				);
+				context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 				// Convert the canvas content to a data URL
 				const dataUrl = canvasRef.current.toDataURL("image/png");
 				setPreviewSrc(dataUrl); // Set the preview image source
@@ -107,7 +100,8 @@ export const ImageRecognition = ({
 				setCameraActive(true);
 			};
 		}
-	}, [videoRef.current]);
+		// No dependencies here since videoRef.current is mutable and won't trigger re-renders
+	}, []);
 
 	// Clean up the camera stream when the component unmounts
 	useEffect(() => {
@@ -120,17 +114,8 @@ export const ImageRecognition = ({
 		<div>
 			{cameraActive ? (
 				<div>
-					<video
-						ref={videoRef}
-						autoPlay
-						style={{ width: "100%", maxHeight: "400px" }}
-					/>
-					<canvas
-						ref={canvasRef}
-						style={{ display: "none" }}
-						width={640}
-						height={480}
-					/>
+					<video ref={videoRef} autoPlay style={{ width: "100%", maxHeight: "400px" }} />
+					<canvas ref={canvasRef} style={{ display: "none" }} width={640} height={480} />
 					<Button variant="contained" color="primary" onClick={captureImage}>
 						Capture Image
 					</Button>
@@ -141,14 +126,7 @@ export const ImageRecognition = ({
 					{previewSrc && (
 						<div style={{ marginTop: "20px" }}>
 							<h3>Captured Image Preview:</h3>
-							<div
-								style={{
-									position: "relative",
-									width: "100%",
-									maxWidth: "640px",
-									height: "auto",
-								}}
-							>
+							<div style={{ position: "relative", width: "100%", maxWidth: "640px", height: "auto" }}>
 								<Image
 									src={previewSrc}
 									alt="Captured Preview"
