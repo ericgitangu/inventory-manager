@@ -18,22 +18,52 @@ interface ThemeContextProps {
 	isDark: boolean;
 }
 
+// Create the ThemeContext with a default value of undefined
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-	const [isDark, setIsDark] = useState(false);
+	const [isDark, setIsDark] = useState<boolean>(() => {
+		// Initialize theme based on local storage or system preference
+		if (typeof window !== "undefined") {
+			const storedTheme = localStorage.getItem("theme");
+			return storedTheme
+				? storedTheme === "dark"
+				: window.matchMedia("(prefers-color-scheme: dark)").matches;
+		}
+		return false;
+	});
 
+	// useEffect to save theme preference to local storage and update theme on change
 	useEffect(() => {
-		setIsDark(isDark);
+		if (isDark) {
+			localStorage.setItem("theme", "dark");
+		} else {
+			localStorage.setItem("theme", "light");
+		}
 	}, [isDark]);
 
+	// Function to toggle between dark and light themes
 	const toggleTheme = () => {
-		setIsDark(!isDark);
+		setIsDark((prevMode) => !prevMode);
 	};
 
+	// Create the theme object
 	const theme = createTheme({
 		palette: {
 			mode: isDark ? "dark" : "light",
+			background: {
+				default: isDark ? "#121212" : "#ffffff",
+			},
+			primary: {
+				main: isDark ? "#90caf9" : "#1976d2",
+			},
+			secondary: {
+				main: isDark ? "#f48fb1" : "#dc004e",
+			},
+			text: {
+				primary: isDark ? "#ffffff" : "#000000",
+				secondary: isDark ? "#b0bec5" : "#555555",
+			},
 		},
 	});
 
@@ -47,7 +77,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	);
 };
 
-// This is the key part: ensure that this hook is correctly defined and exported
+// Custom hook to use the ThemeContext
 export const useTheme = (): ThemeContextProps => {
 	const context = useContext(ThemeContext);
 	if (!context) {

@@ -107,7 +107,8 @@ export async function POST(
 
 			// Extract the description from the OpenAI response
 			const description =
-				openaiResponse?.choices[0]?.message?.content?.trim() ?? "No description available";
+				openaiResponse?.choices[0]?.message?.content?.trim() ??
+				"No description available";
 
 			// Reuse the OpenAI client to categorize the item
 			const categoryResponse = await openaiClient.chat.completions.create({
