@@ -13,7 +13,7 @@ import Sidebar from "../components/Sidebar";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-  const router = useRouter();
+	const router = useRouter();
 	const { isDark, toggleTheme } = useTheme();
 	const { data: session, status } = useSession();
 	const [initialItems, setInitialItems] = useState<any[]>([]);
@@ -23,12 +23,6 @@ export default function DashboardPage() {
 	const toggleSidebar = () => {
 		setDrawerOpen(!drawerOpen);
 	};
-
-  useEffect(() => {
-		if (status === "unauthenticated") {
-		  router.push("/");
-		}
-	  }, [status, router]);
 
 	// Fetch data from the API on client side
 	useEffect(() => {
@@ -91,10 +85,13 @@ export default function DashboardPage() {
 					/>
 				</Toolbar>
 			</AppBar>
-      <Sidebar
+			<Sidebar
 				isOpen={drawerOpen}
 				toggleSidebar={toggleSidebar}
-				handleLogout={() => {signOut()}}
+				handleLogout={() => {
+					router.push("/");
+					signOut();
+				}}
 			/>
 			<Dashboard initialItems={initialItems} />
 		</>

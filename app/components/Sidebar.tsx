@@ -15,6 +15,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -55,7 +56,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</ListItemIcon>
 					<ListItemText primary="Dashboard" />
 				</ListItem>
-				<ListItem button onClick={handleLogout}>
+				<ListItem
+					button
+					onClick={() => {
+						signOut();
+					}}
+				>
 					<ListItemIcon>
 						<ExitToAppIcon />
 					</ListItemIcon>

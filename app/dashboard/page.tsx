@@ -33,7 +33,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	CircularProgress,
+} from "@mui/material";
 import { useSession, signOut } from "next-auth/react";
 import Sidebar from "../components/Sidebar";
 import { useRouter } from "next/navigation";
@@ -70,12 +75,6 @@ const Dashboard = () => {
 	const handleInspectClose = () => {
 		setInspectItem(null);
 	};
-
-	useEffect(() => {
-		if (status === "unauthenticated") {
-		  router.push("/");
-		}
-	  }, [status, router]);
 
 	useEffect(() => {
 		const fetchItems = async () => {
@@ -224,7 +223,10 @@ const Dashboard = () => {
 			<Sidebar
 				isOpen={drawerOpen}
 				toggleSidebar={toggleSidebar}
-				handleLogout={() => {signOut()}}
+				handleLogout={() => {
+					router.push("/");
+					signOut();
+				}}
 			/>
 			<Container maxWidth="lg" sx={{ marginTop: 4 }}>
 				<Grid container spacing={4}>
