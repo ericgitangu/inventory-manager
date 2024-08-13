@@ -10,7 +10,7 @@
 /coverage
 
 # next.js
-/.next/
+.next/
 /out/
 
 # production
@@ -42,3 +42,6 @@ cred*.txt
 
 # Google OAuth2
 client_secret*.json
+
+# vscode
+.vscode
