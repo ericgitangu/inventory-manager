@@ -1,7 +1,15 @@
 // next.config.js
 module.exports = {
-    images: {
-      domains: ['lh3.googleusercontent.com'], // Add other domains as needed
-    },
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
+        port: "",
+        pathname: "**",
+      },
+    ],
+  },
   };
   
