@@ -7,13 +7,28 @@ import { useTheme } from "../context/ThemeContext";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
+import MenuIcon from "@mui/icons-material/Menu";
+import Sidebar from "../components/Sidebar";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
 	const { isDark, toggleTheme } = useTheme();
-	const { data: session } = useSession();
+	const { data: session, status } = useSession();
 	const [initialItems, setInitialItems] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	const toggleSidebar = () => {
+		setDrawerOpen(!drawerOpen);
+	};
+
+  useEffect(() => {
+		if (status === "unauthenticated") {
+		  router.push("/");
+		}
+	  }, [status, router]);
 
 	// Fetch data from the API on client side
 	useEffect(() => {
@@ -56,6 +71,14 @@ export default function DashboardPage() {
 		<>
 			<AppBar position="static">
 				<Toolbar>
+					<IconButton
+						edge="start"
+						color="inherit"
+						aria-label="menu"
+						onClick={toggleSidebar}
+					>
+						<MenuIcon />
+					</IconButton>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						InvenAI
 					</Typography>
@@ -68,6 +91,11 @@ export default function DashboardPage() {
 					/>
 				</Toolbar>
 			</AppBar>
+      <Sidebar
+				isOpen={drawerOpen}
+				toggleSidebar={toggleSidebar}
+				handleLogout={() => {signOut()}}
+			/>
 			<Dashboard initialItems={initialItems} />
 		</>
 	);

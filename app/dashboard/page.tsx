@@ -32,8 +32,11 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import MenuIcon from "@mui/icons-material/Menu";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
+import Sidebar from "../components/Sidebar";
+import { useRouter } from "next/navigation";
 
 const COLORS = [
 	"#8884d8",
@@ -45,16 +48,20 @@ const COLORS = [
 ];
 
 const Dashboard = () => {
+	const router = useRouter();
 	const { isDark, toggleTheme } = useTheme();
-	const { data: session } = useSession();
+	const { data: session, status } = useSession();
 	const [loading, setLoading] = useState(true);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [items, setItems] = useState<any[]>([]);
 	const [abbreviations, setAbbreviations] = useState<Record<string, string>>(
 		{},
 	);
-
-	// Inside your component:
 	const [inspectItem, setInspectItem] = useState<any | null>(null);
+
+	const toggleSidebar = () => {
+		setDrawerOpen(!drawerOpen);
+	};
 
 	const handleInspectClick = (item: any) => {
 		setInspectItem(item);
@@ -63,6 +70,12 @@ const Dashboard = () => {
 	const handleInspectClose = () => {
 		setInspectItem(null);
 	};
+
+	useEffect(() => {
+		if (status === "unauthenticated") {
+		  router.push("/");
+		}
+	  }, [status, router]);
 
 	useEffect(() => {
 		const fetchItems = async () => {
@@ -188,6 +201,14 @@ const Dashboard = () => {
 		<>
 			<AppBar position="static">
 				<Toolbar>
+					<IconButton
+						edge="start"
+						color="inherit"
+						aria-label="menu"
+						onClick={toggleSidebar}
+					>
+						<MenuIcon />
+					</IconButton>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						InvenAI
 					</Typography>
@@ -200,6 +221,11 @@ const Dashboard = () => {
 					/>
 				</Toolbar>
 			</AppBar>
+			<Sidebar
+				isOpen={drawerOpen}
+				toggleSidebar={toggleSidebar}
+				handleLogout={() => {signOut()}}
+			/>
 			<Container maxWidth="lg" sx={{ marginTop: 4 }}>
 				<Grid container spacing={4}>
 					{loading ? (
