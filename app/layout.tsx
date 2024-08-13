@@ -17,7 +17,7 @@ export const metadata = {
 		siteName: "Inventory Manager by Eric Gitangu",
 		images: [
 			{
-				url: "/logo.png",
+				url: "https://inventory-manager-deveric.vercel.app/_next/image?url=%2Flogo.png&w=256&q=75",
 				width: 800,
 				height: 600,
 				alt: "Inventory Manager Logo",
@@ -32,7 +32,7 @@ export const metadata = {
 		description:
 			"An advanced inventory management system utilizing AI-powered autocomplete and image recognition. Developed by Eric Gitangu.",
 		creator: "@ericgitangu",
-		images: ["/logo.png"],
+		images: ["https://inventory-manager-deveric.vercel.app/_next/image?url=%2Flogo.png&w=256&q=75"],
 	},
 };
 
