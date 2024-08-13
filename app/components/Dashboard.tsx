@@ -173,7 +173,7 @@ const Dashboard = ({ initialItems }: { initialItems: any[] }) => {
 
 	return (
 		<div className="container mx-auto p-4">
-			<h1 className="text-2xl font-bold mb-4">Inventory Dashboard</h1>
+			<h1 className="text-2xl font-bold mb-4">Manage Inventory</h1>
 			<div className="flex flex-col items-center space-y-4 mb-4 sm:flex-row sm:justify-center sm:space-x-4 sm:items-center">
 				<AutocompleteSearchBar onSelect={handleSelect} />
 				<ImageRecognition onRecognize={handleSelect} />

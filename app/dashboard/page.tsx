@@ -42,6 +42,7 @@ import {
 import { useSession, signOut } from "next-auth/react";
 import Sidebar from "../components/Sidebar";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const COLORS = [
 	"#8884d8",
@@ -214,9 +215,14 @@ const Dashboard = () => {
 					<IconButton color="inherit" onClick={toggleTheme}>
 						{isDark ? <Brightness7Icon /> : <Brightness4Icon />}
 					</IconButton>
-					<Avatar
+					<Image
 						alt={session?.user?.name || "User Avatar"}
 						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
+						referrerPolicy={"no-referrer"}
+						width={40}
+						height={40}
+						className="rounded-full"
+						unoptimized={true}
 					/>
 				</Toolbar>
 			</AppBar>

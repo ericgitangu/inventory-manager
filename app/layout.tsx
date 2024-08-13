@@ -5,16 +5,18 @@ import { getSession } from "next-auth/react";
 import Providers from "./providers";
 
 export const metadata = {
-	title: "Inventory Manager by Eric Gitangu",
+	title: "InvenAI - An AI-Powered Inventory Manager.",
 	description:
 		"An advanced inventory management system utilizing AI-powered autocomplete and image recognition. Developed by Eric Gitangu.",
 	metadataBase: new URL("https://developer.ericgitangu.com"),
+	Author: "Eric Gitangu",
 	openGraph: {
-		title: "Inventory Manager by Eric Gitangu",
+		title: "InvenAI - An AI-Powered Inventory Manager.",
 		description:
 			"An advanced inventory management system utilizing AI-powered autocomplete and image recognition. Developed by Eric Gitangu.",
 		url: "https://developer.ericgitangu.com",
-		siteName: "Inventory Manager by Eric Gitangu",
+		author: "Eric Gitangu",
+		siteName: "InvenAI - An AI-Powered Inventory Manager.",
 		images: [
 			{
 				url: "https://inventory-manager-deveric.vercel.app/_next/image?url=%2Flogo.png&w=256&q=75",
@@ -28,7 +30,8 @@ export const metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Inventory Manager by Eric Gitangu",
+		title: "InvenAI - An AI-Powered Inventory Manager.",
+		author: "Eric Gitangu",
 		description:
 			"An advanced inventory management system utilizing AI-powered autocomplete and image recognition. Developed by Eric Gitangu.",
 		creator: "@ericgitangu",
