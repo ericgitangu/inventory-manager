@@ -12,6 +12,19 @@ export async function POST(req: NextRequest) {
 		// Log the received request
 		console.log("Received request with message:", message);
 
+		// Fetch inventory data from the /api/inventory/items endpoint
+		const inventoryResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/inventory/items`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const inventoryData = await inventoryResponse.json();
+
+		// Log the fetched inventory data
+		console.log("Fetched inventory data:", inventoryData);
+
+		// Include the inventory data in the OpenAI prompt
 		const startTime = Date.now(); // Start time for request timing
 
 		const completion = await openai.chat.completions.create({
@@ -21,7 +34,7 @@ export async function POST(req: NextRequest) {
 					role: "system",
 					content: "You are a helpful assistant for managing inventory.",
 				},
-				{ role: "user", content: message },
+				{ role: "user", content: `Inventory: ${JSON.stringify(inventoryData)}. ${message}` },
 			],
 			max_tokens: 100,
 		});
