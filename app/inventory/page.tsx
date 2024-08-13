@@ -7,9 +7,11 @@ import { useTheme } from "../context/ThemeContext";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
 	const { isDark, toggleTheme } = useTheme();
+	const { data: session } = useSession();
 	const [initialItems, setInitialItems] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 
@@ -60,7 +62,10 @@ export default function DashboardPage() {
 					<IconButton color="inherit" onClick={toggleTheme}>
 						{isDark ? <Brightness7Icon /> : <Brightness4Icon />}
 					</IconButton>
-					<Avatar alt="User Avatar" src="/path-to-user-avatar.jpg" />
+					<Avatar
+						alt={session?.user?.name || "User Avatar"}
+						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
+					/>
 				</Toolbar>
 			</AppBar>
 			<Dashboard initialItems={initialItems} />

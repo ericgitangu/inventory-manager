@@ -90,7 +90,7 @@ const Chatbot = ({ items }: { items: any[] }) => {
 			</IconButton>
 			<Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
 				<DialogTitle>
-					AI Chatbot
+					InvenAI Chatbot
 					<IconButton
 						aria-label="close"
 						onClick={handleClose}

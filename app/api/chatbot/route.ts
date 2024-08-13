@@ -13,12 +13,15 @@ export async function POST(req: NextRequest) {
 		console.log("Received request with message:", message);
 
 		// Fetch inventory data from the /api/inventory/items endpoint
-		const inventoryResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/inventory/items`, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
+		const inventoryResponse = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/inventory/items`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
 			},
-		});
+		);
 		const inventoryData = await inventoryResponse.json();
 
 		// Log the fetched inventory data
@@ -34,7 +37,10 @@ export async function POST(req: NextRequest) {
 					role: "system",
 					content: "You are a helpful assistant for managing inventory.",
 				},
-				{ role: "user", content: `Inventory: ${JSON.stringify(inventoryData)}. ${message}` },
+				{
+					role: "user",
+					content: `Inventory: ${JSON.stringify(inventoryData)}. ${message}`,
+				},
 			],
 			max_tokens: 100,
 		});
@@ -55,7 +61,10 @@ export async function POST(req: NextRequest) {
 		console.error("Error with OpenAI API:", (error as Error).message);
 		console.error("Stack trace:", (error as Error).stack);
 
-		return NextResponse.json({ error: "Failed to get a response from the AI." }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to get a response from the AI." },
+			{ status: 500 },
+		);
 	}
 }
 

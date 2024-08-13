@@ -33,6 +33,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { useSession } from "next-auth/react";
 
 const COLORS = [
 	"#8884d8",
@@ -45,6 +46,7 @@ const COLORS = [
 
 const Dashboard = () => {
 	const { isDark, toggleTheme } = useTheme();
+	const { data: session } = useSession();
 	const [loading, setLoading] = useState(true);
 	const [items, setItems] = useState<any[]>([]);
 	const [abbreviations, setAbbreviations] = useState<Record<string, string>>(
@@ -133,6 +135,55 @@ const Dashboard = () => {
 		},
 	];
 
+	const itemsByCategory = items.reduce((acc: Record<string, any[]>, item) => {
+		const abbrev =
+			item.category.length > 10
+				? `${item.category.substring(0, 7)}...`
+				: item.category;
+
+		if (!acc[abbrev]) {
+			acc[abbrev] = [];
+		}
+		acc[abbrev].push(item.name);
+		return acc;
+	}, {});
+
+	const CustomTooltip = ({ active, payload }: any) => {
+		if (active && payload && payload.length) {
+			const category = payload[0].payload.category;
+			const items = itemsByCategory[category] || [];
+
+			console.log("Tooltip category:", category);
+			console.log("Items in category:", items);
+
+			return (
+				<Box
+					sx={{
+						backgroundColor: isDark ? "#333" : "#fff",
+						border: "1px solid #ccc",
+						borderRadius: 4,
+						padding: 2,
+						color: isDark ? "#fff" : "#000",
+						maxWidth: 250,
+					}}
+				>
+					<Typography variant="h6">{abbreviations[category]}:</Typography>
+					{items.length > 0 ? (
+						items.map((item: any, index: number) => (
+							<Typography key={index} variant="body2">
+								{index + 1}. {item}
+							</Typography>
+						))
+					) : (
+						<Typography variant="body2">No items in this category</Typography>
+					)}
+				</Box>
+			);
+		}
+
+		return null;
+	};
+
 	return (
 		<>
 			<AppBar position="static">
@@ -143,7 +194,10 @@ const Dashboard = () => {
 					<IconButton color="inherit" onClick={toggleTheme}>
 						{isDark ? <Brightness7Icon /> : <Brightness4Icon />}
 					</IconButton>
-					<Avatar alt="User Avatar" src="/path-to-user-avatar.jpg" />
+					<Avatar
+						alt={session?.user?.name || "User Avatar"}
+						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
+					/>
 				</Toolbar>
 			</AppBar>
 			<Container maxWidth="lg" sx={{ marginTop: 4 }}>
@@ -186,38 +240,22 @@ const Dashboard = () => {
 							Items by Category
 						</Typography>
 						<ResponsiveContainer width="100%" height={300}>
-							{loading ? (
-								<Skeleton variant="rectangular" width="100%" height={300} />
-							) : (
-								<BarChart data={chartData}>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="category" />
-									<YAxis />
-									<Tooltip />
-									<Bar dataKey="count">
-										{chartData.map((entry, index) => (
-											<Cell
-												key={`cell-${index}`}
-												fill={COLORS[index % COLORS.length]}
-											/>
-										))}
-									</Bar>
-									<Legend
-										verticalAlign="top"
-										align="center"
-										className="mb-4"
-										formatter={(value: string) => (
-											<span style={{ color: isDark ? "#ffffff" : "#00000" }}>
-												{Object.entries(abbreviations).map(([key, val]) => (
-													<div key={key}>
-														{key}: {val}
-													</div>
-												))}
-											</span>
-										)}
-									/>
-								</BarChart>
-							)}
+							<BarChart data={chartData}>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="category" />
+								<YAxis />
+								<Tooltip
+									content={<CustomTooltip itemsByCategory={itemsByCategory} />}
+								/>
+								<Bar dataKey="count">
+									{chartData.map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={COLORS[index % COLORS.length]}
+										/>
+									))}
+								</Bar>
+							</BarChart>
 						</ResponsiveContainer>
 					</Grid>
 
