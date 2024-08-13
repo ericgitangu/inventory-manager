@@ -32,7 +32,9 @@ export const metadata = {
 		description:
 			"An advanced inventory management system utilizing AI-powered autocomplete and image recognition. Developed by Eric Gitangu.",
 		creator: "@ericgitangu",
-		images: ["https://inventory-manager-deveric.vercel.app/_next/image?url=%2Flogo.png&w=256&q=75"],
+		images: [
+			"https://inventory-manager-deveric.vercel.app/_next/image?url=%2Flogo.png&w=256&q=75",
+		],
 	},
 };
 

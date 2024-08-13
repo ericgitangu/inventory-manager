@@ -42,6 +42,7 @@ import {
 import { useSession, signOut } from "next-auth/react";
 import Sidebar from "../components/Sidebar";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const COLORS = [
 	"#8884d8",
@@ -196,6 +197,23 @@ const Dashboard = () => {
 		return null;
 	};
 
+	interface UserAvatarProps {
+		src: string;
+		alt: string;
+	}
+
+	const UserAvatar: React.FC<UserAvatarProps> = ({ src, alt }) => (
+		<Image
+			src={src}
+			alt={alt}
+			width={50} // Set appropriate width
+			height={50} // Set appropriate height
+			quality={100}
+			unoptimized={true} // Disables the built-in optimization to avoid issues with CORS
+			className="rounded-full mr-2"
+		/>
+	);
+
 	return (
 		<>
 			<AppBar position="static">
@@ -214,7 +232,7 @@ const Dashboard = () => {
 					<IconButton color="inherit" onClick={toggleTheme}>
 						{isDark ? <Brightness7Icon /> : <Brightness4Icon />}
 					</IconButton>
-					<Avatar
+					<UserAvatar
 						alt={session?.user?.name || "User Avatar"}
 						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
 					/>
@@ -224,7 +242,6 @@ const Dashboard = () => {
 				isOpen={drawerOpen}
 				toggleSidebar={toggleSidebar}
 				handleLogout={() => {
-					router.push("/");
 					signOut();
 				}}
 			/>

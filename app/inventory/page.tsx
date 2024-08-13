@@ -11,6 +11,7 @@ import { useSession, signOut } from "next-auth/react";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "../components/Sidebar";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function DashboardPage() {
 	const router = useRouter();
@@ -61,6 +62,22 @@ export default function DashboardPage() {
 		);
 	}
 
+	interface UserAvatarProps {
+		src: string;
+		alt: string;
+	}
+
+	const UserAvatar: React.FC<UserAvatarProps> = ({ src, alt }) => (
+		<Image
+			src={src}
+			alt={alt}
+			width={50} // Set appropriate width
+			height={50} // Set appropriate height
+			quality={100}
+			unoptimized={true} // Disables the built-in optimization to avoid issues with CORS
+			className="rounded-full mr-2"
+		/>
+	);
 	return (
 		<>
 			<AppBar position="static">
@@ -79,7 +96,7 @@ export default function DashboardPage() {
 					<IconButton color="inherit" onClick={toggleTheme}>
 						{isDark ? <Brightness7Icon /> : <Brightness4Icon />}
 					</IconButton>
-					<Avatar
+					<UserAvatar
 						alt={session?.user?.name || "User Avatar"}
 						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
 					/>
@@ -89,7 +106,6 @@ export default function DashboardPage() {
 				isOpen={drawerOpen}
 				toggleSidebar={toggleSidebar}
 				handleLogout={() => {
-					router.push("/");
 					signOut();
 				}}
 			/>
