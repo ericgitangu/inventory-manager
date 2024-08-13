@@ -14,6 +14,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { useSession, signIn } from "next-auth/react";
 import { useTheme } from "./context/ThemeContext";
+import Image from "next/image";
 
 export default function Home() {
 	const { data: session } = useSession();
@@ -43,9 +44,25 @@ export default function Home() {
 					</IconButton>
 					<Switch checked={isDark} onChange={toggleTheme} />
 				</Box>
-				<Typography variant="h2" component="h1" gutterBottom>
-					Welcome to AI-Powered Inventory Manager
-				</Typography>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						mb: 2,
+					}}
+				>
+					<Image
+						src="/logo.png"
+						alt="InvenAI Logo"
+						width={150}
+						height={150}
+						className="rounded-full mr-2"
+					/>
+					<Typography variant="h2" component="h1" gutterBottom>
+						<strong>InvenAI</strong> your AI-Powered Inventory Manager
+					</Typography>
+				</Box>
 				<Typography variant="h5" component="h2" gutterBottom>
 					Efficiently manage and categorize your inventory with the power of AI
 					and cloud services.
@@ -53,7 +70,7 @@ export default function Home() {
 				<Typography variant="body1" color="textSecondary" gutterBottom>
 					Leverage Google Vision and OpenAI to automatically recognize,
 					categorize, and describe your inventory items. Integrated
-					authentication and secure data storage using Google and PostgreSQL
+					authentication and secure data storage on the cloud and on-demand
 					ensure your inventory is safe and accessible anytime, anywhere.
 				</Typography>
 
@@ -125,7 +142,7 @@ export default function Home() {
 					<Grid item xs={12} sm={6}>
 						<Paper sx={{ padding: "20px" }} elevation={3}>
 							<Typography variant="h6" component="h4">
-								Customer Service Chatbot
+								Robust AI Customer Service -Custom Chatbot
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
 								An integrated AI chatbot assists you with inventory management,
@@ -141,7 +158,8 @@ export default function Home() {
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
 								Throttle API calls to manage costs and ensure efficient use of
-								resources.
+								resources. Ensures that your application is convenient and cost
+								effective.
 							</Typography>
 						</Paper>
 					</Grid>
