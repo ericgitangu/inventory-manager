@@ -60,7 +60,7 @@ export default function Home() {
 						className="rounded-full mr-2"
 					/>
 					<Typography variant="h2" component="h1" gutterBottom>
-						<strong>InvenAI</strong> your AI-Powered Inventory Manager
+						<strong>InvenAI</strong>
 					</Typography>
 				</Box>
 				<Typography variant="h5" component="h2" gutterBottom>
