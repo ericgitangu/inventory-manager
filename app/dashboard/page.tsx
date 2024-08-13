@@ -215,13 +215,9 @@ const Dashboard = () => {
 					<IconButton color="inherit" onClick={toggleTheme}>
 						{isDark ? <Brightness7Icon /> : <Brightness4Icon />}
 					</IconButton>
-					<img
-						alt={session?.user?.name || "User Avatar"}
+					<Avatar
+						alt={session?.user?.name || "InvenAI User Avatar"}
 						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
-						referrerPolicy={"no-referrer"}
-						width={40}
-						height={40}
-						className="rounded-full"
 					/>
 				</Toolbar>
 			</AppBar>
