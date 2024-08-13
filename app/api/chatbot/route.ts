@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 		console.log("Received request with message:", message);
 
 		// Fetch inventory data from the /api/inventory/items endpoint
-		const inventoryResponse = await fetch(`/api/inventory/items`, {
+		const inventoryResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/inventory/items`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
