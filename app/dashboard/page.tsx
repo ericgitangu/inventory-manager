@@ -41,8 +41,6 @@ import {
 } from "@mui/material";
 import { useSession, signOut } from "next-auth/react";
 import Sidebar from "../components/Sidebar";
-import { useRouter } from "next/navigation";
-
 
 const COLORS = [
 	"#8884d8",
@@ -54,9 +52,9 @@ const COLORS = [
 ];
 
 const Dashboard = () => {
-	const router = useRouter();
+	const [avatarUrl, setAvatarUrl] = useState<string>("");
 	const { isDark, toggleTheme } = useTheme();
-	const { data: session } = useSession();
+	const { data: session, status } = useSession();
 	const [loading, setLoading] = useState(true);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [items, setItems] = useState<any[]>([]);
@@ -197,6 +195,13 @@ const Dashboard = () => {
 		return null;
 	};
 
+	useEffect(() => {
+		console.log("status", status);
+		if (status === "authenticated") {
+			setAvatarUrl(session?.user?.image as string);
+		}
+	}, [status]);
+
 	return (
 		<>
 			<AppBar position="static">
@@ -217,7 +222,7 @@ const Dashboard = () => {
 					</IconButton>
 					<Avatar
 						alt={session?.user?.name || "InvenAI User Avatar"}
-						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
+						src={avatarUrl || "/path-to-placeholder-avatar.jpg"}
 					/>
 				</Toolbar>
 			</AppBar>

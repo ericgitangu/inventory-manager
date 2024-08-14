@@ -11,10 +11,10 @@ import { useSession, signOut } from "next-auth/react";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "../components/Sidebar";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 export default function DashboardPage() {
 	const router = useRouter();
+	const [avatarUrl, setAvatarUrl] = useState<string>("");
 	const { isDark, toggleTheme } = useTheme();
 	const { data: session, status } = useSession();
 	const [initialItems, setInitialItems] = useState<any[]>([]);
@@ -41,6 +41,13 @@ export default function DashboardPage() {
 
 		fetchItems();
 	}, []);
+
+	useEffect(() => {
+		console.log("status", status);
+		if (status === "authenticated") {
+			setAvatarUrl(session?.user?.image || "");
+		}
+	}, [status]);
 
 	if (loading) {
 		return (
@@ -82,8 +89,7 @@ export default function DashboardPage() {
 					</IconButton>
 					<Avatar
 						alt={session?.user?.name || "InvenAI User Avatar"}
-						src={session?.user?.image || "/path-to-placeholder-avatar.jpg"}
-
+						src={avatarUrl || "/path-to-placeholder-avatar.jpg"}
 					/>
 				</Toolbar>
 			</AppBar>

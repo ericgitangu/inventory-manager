@@ -84,9 +84,9 @@ const Chatbot = ({ items }: { items: any[] }) => {
 			<IconButton
 				color="primary"
 				onClick={handleOpen}
-				style={{ position: "fixed", bottom: 16, right: 16, zIndex: 1000 }}
+				style={{ position: "fixed", bottom: 16, left: 16, zIndex: 1000 }}
 			>
-				<ChatIcon />
+				<ChatIcon className="w-12 h-12 animate-pulse" />
 			</IconButton>
 			<Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
 				<DialogTitle>
