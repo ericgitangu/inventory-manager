@@ -22,7 +22,7 @@
     "autoprefixer": "^10.4.20",
     "date-fns": "^3.6.0",
     "formidable": "^3.5.1",
-    "next": "14.2.5",
+    "next": "14.2.12",
     "next-auth": "^4.24.7",
     "openai": "^4.55.4",
     "react": "^18",
